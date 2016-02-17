@@ -3,6 +3,8 @@ package skadistats.clarity.processor.runner;
 import skadistats.clarity.model.EngineType;
 import skadistats.clarity.source.Source;
 
+import java.io.IOException;
+
 public interface Runner<T extends Runner> {
 
     Context getContext();
@@ -10,6 +12,6 @@ public interface Runner<T extends Runner> {
     Source getSource();
     EngineType getEngineType();
 
-    T runWith(Object... processors);
+    T runWith(Object... processors) throws IOException;
 
 }

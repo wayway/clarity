@@ -200,13 +200,18 @@ public class ControllableRunner extends AbstractRunner<ControllableRunner> {
     }
 
     @Override
-    public ControllableRunner runWith(final Object... processors) {
+    public ControllableRunner runWith(final Object... processors) throws IOException {
         runnerThread = new Thread(new Runnable() {
             @Override
             public void run() {
+            try {
                 log.debug("runner started");
                 ControllableRunner.super.runWith(processors);
                 log.debug("runner finished");
+            } catch (IOException ex) {
+                Thread t = Thread.currentThread();
+                t.getUncaughtExceptionHandler().uncaughtException(t, ex);
+            }
             }
         });
         runnerThread.setName("clarity-runner");

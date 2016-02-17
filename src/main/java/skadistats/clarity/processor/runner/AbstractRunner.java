@@ -24,11 +24,10 @@ public abstract class AbstractRunner<T extends Runner> implements Runner<Abstrac
     /* tick is synthetic (does not contain replay data) */
     protected boolean synthetic = true;
 
-    public AbstractRunner(Source source, EngineType engineType) throws IOException {
+    public AbstractRunner(Source source, EngineType engineType) {
         this.source = source;
         this.engineType = engineType;
         this.tick = -1;
-        engineType.skipHeaderOffsets(source);
     }
 
     protected ExecutionModel createExecutionModel(Object... processors) {
@@ -71,10 +70,11 @@ public abstract class AbstractRunner<T extends Runner> implements Runner<Abstrac
     }
 
     @Override
-    public AbstractRunner<T> runWith(Object... processors) {
+    public AbstractRunner<T> runWith(Object... processors) throws IOException {
         ExecutionModel em = createExecutionModel(processors);
         context = new Context(em);
         em.initialize(context);
+        context.getEngineType().readHeader(source);
         context.createEvent(OnInputSource.class, Source.class, LoopController.class).raise(source, loopController);
         return this;
     }
